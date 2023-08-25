@@ -28,5 +28,17 @@ public class CustomerService {
 	public Optional<Customer> registerAccount(Long cid) {
 		return urepo.findById(cid);
 	}
+
+	
+	public Customer getCurrentUser(Long fromAcc) {
+		// TODO Auto-generated method stub
+		return urepo.getById(fromAcc);
+	}
+
+	
+
+	
+
+	
 	
 }
