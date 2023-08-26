@@ -5,6 +5,7 @@ package com.wellsfargo.training.obs.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.wellsfargo.training.obs.service.AccountService;
 import com.wellsfargo.training.obs.service.CustomerService;
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wellsfargo.training.obs.exception.ResourceNotFoundException;
 import com.wellsfargo.training.obs.model.Account;
 import com.wellsfargo.training.obs.model.Customer;
 import com.wellsfargo.training.obs.model.Transaction;
@@ -38,12 +40,15 @@ public class TransactionController {
 	@Autowired private TransactionService TransactionService;
 	@Autowired private AccountService accountsService;
 	@Autowired private CustomerService userService;
+	@Autowired private AccountController accountcont;
+	
 //	@Autowired private BCryptPasswordEncoder passwordEncoder;
 	private ObjectMapper objectMapper;
 	private Logger LOGGER = LoggerFactory.getLogger(getClass())	;
-	public TransactionController(TransactionService TransactionService, CustomerService userService, 
+	public TransactionController(AccountController a,TransactionService TransactionService, CustomerService userService, 
 			AccountService accountService) {
 		super();
+		this.accountcont=a;
 		this.TransactionService = TransactionService;
 		this.userService = userService;
 		this.accountsService = accountService;
@@ -71,10 +76,10 @@ public class TransactionController {
 			Long toAcc = jsonNode.get("toacc").asLong();
 			
 			
-			Account toAccount = accountsService.getAccountsById(toAcc);
+			Account toAccount = accountsService.getAccountByNo(toAcc).orElseThrow(() -> new ResourceNotFoundException("Account not found"));;
 			if(toAccount==null )
 				throw new Exception(toAcc + " does not exists");
-			Account fromAccount = accountsService.getAccountsById(fromAcc);
+			Account fromAccount = accountsService.getAccountByNo(fromAcc).orElseThrow(() -> new ResourceNotFoundException("Account not found"));;
 			Long amount = jsonNode.get("amount").asLong();
 			Long balance = fromAccount.getBalance();
 			String type = jsonNode.get("type").toString();
@@ -84,9 +89,9 @@ public class TransactionController {
 //				throw new Exception("Transaction can be done by your account only");
 //			}
 //			LOGGER.info(user.getPin() + ":"+user.getUserId());
-//			if(!(passwordEncoder.matches(jsonNode.get("pin").asText(), user.getPin()))) {
-//				throw new Exception("Invalid Pin");
-//			}
+			if(!(jsonNode.get("transactionpassword").asText().equals( fromAccount.getTransactionpassword()))) {
+				throw new Exception("Invalid Pin");
+			}
 			
 //			if(accountsService.existsById(toAcc)==false) {
 //				throw new Exception("Transaction done to an invalid account");
@@ -116,10 +121,12 @@ public class TransactionController {
 			toBalance = toBalance+amount;
 			fromAccount.setBalance(toBalance);
 			toAccount.setBalance(balance);
+			Account a=accountsService.getAccountByNo(toAcc).orElseThrow(()->new ResourceNotFoundException("Product not found for this Id : "));;
+			a.setBalance(toBalance);
+			Account b=accountsService.getAccountByNo(fromAcc).orElseThrow(()->new ResourceNotFoundException("Product not found for this Id : "));;
+			b.setBalance(balance);
 			
-			accountsService.saveAccounts(fromAccount);
-			accountsService.saveAccounts(toAccount);
-			
+
 
 			
 			
@@ -129,7 +136,7 @@ public class TransactionController {
 			transaction.setAmount(amount);
 			transaction.setDate(date);
 			transaction.setType(type);
-			//transaction.setTransid(transId);
+			
 			TransactionService.saveTransaction(transaction);
 		}
 		catch (Exception e) {

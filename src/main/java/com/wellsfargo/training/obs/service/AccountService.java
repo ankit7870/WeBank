@@ -25,9 +25,8 @@ public class AccountService {
 		return arepo.findByAccountno(accountno);
 	}
 
-	public Account getAccountsById(Long toAcc) {
-		// TODO Auto-generated method stub
-		return arepo.getById(toAcc);
+	public Optional<Account> getAccountByNo (Long accountno) {
+		return arepo.findByAccountno(accountno);
 	}
 
 	public void saveAccounts(Account a) {

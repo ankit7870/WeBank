@@ -22,12 +22,12 @@ public class Account {
 	private Long balance;
 	private String type;
 	public Account() {
-		super();
+		//super();
 		// TODO Auto-generated constructor stub
 	}
 	public Account(Long accountid, Long accountno, String password, String transactionpassword, Long balance,
 			String type) {
-		Accountid = accountid;
+		this.Accountid = accountid;
 		this.accountno = accountno;
 		this.password = password;
 		this.transactionpassword = transactionpassword;
