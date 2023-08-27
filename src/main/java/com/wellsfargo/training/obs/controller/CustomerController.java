@@ -40,9 +40,9 @@ public class CustomerController {
 				
 		Customer registeredUser = customerservice.registerUser(customer);
 	    if (registeredUser!= null) {
-	        return ResponseEntity.ok("Registration successful");
+	        return ResponseEntity.ok("Applied successfully");
 	    } else {
-	        return ResponseEntity.badRequest().body("Registration failed");
+	        return ResponseEntity.badRequest().body("Error occured while applying");
 	    }
 		
 	}

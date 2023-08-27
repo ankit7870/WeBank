@@ -25,7 +25,7 @@ public class Occupation {
 	
 	
 	
-	private String type = "saving";
+	private String type;
 	private String sourceofincome;
 	private String grossannualincome;
 	

@@ -11,15 +11,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name="customers")
 public class Customer {
 	
-		
+		@SequenceGenerator(name="customer_seq", initialValue = 2023000, allocationSize = 1)
 		@Id   // Primary key /unique
-		@GeneratedValue(strategy = GenerationType.IDENTITY)
+		@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "customer_seq")
 		private Long customerid;
 		
 		@Column(unique=true)
