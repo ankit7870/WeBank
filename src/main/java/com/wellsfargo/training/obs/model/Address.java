@@ -39,7 +39,7 @@ public class Address {
 	private  int pincode;
 	
 	@OneToOne
-	@JoinColumn(name="userid") 
+	@JoinColumn(name="cumtomerid") 
 	private Customer customer;
 
 

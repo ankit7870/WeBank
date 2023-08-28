@@ -27,13 +27,14 @@ public class Account {
 	}
 	public Account(Long accountid, Long accountno, String password, String transactionpassword, Long balance,
 			String type) {
-		this.Accountid = accountid;
+		Accountid = accountid;
 		this.accountno = accountno;
 		this.password = password;
 		this.transactionpassword = transactionpassword;
 		this.balance = balance;
 		this.type = type;
 	}
+	
 	public Long getAccountid() {
 		return Accountid;
 	}

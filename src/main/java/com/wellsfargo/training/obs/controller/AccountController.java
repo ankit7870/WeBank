@@ -3,6 +3,7 @@ package com.wellsfargo.training.obs.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ import com.wellsfargo.training.obs.model.Customer;
 import com.wellsfargo.training.obs.service.AccountService;
 import com.wellsfargo.training.obs.service.CustomerService;
 
-
+@CrossOrigin(origins="http://localhost:3000")
 @RestController
 @RequestMapping("/api")
 public class AccountController {
@@ -28,15 +29,13 @@ public class AccountController {
 	@Autowired
 	private CustomerService cservice;
 	
-
-	
 	@PostMapping("/register")
 	public ResponseEntity<String> createAccount (@Validated @RequestBody Account account) throws ResourceNotFoundException {
 		
 		Long accountno = account.getAccountno();
 		Boolean f = false;
 		
-		Customer c = cservice.registerAccount(accountno).orElseThrow(() -> new ResourceNotFoundException("cust not in db"));
+		Customer c = cservice.registerAccount(accountno).orElseThrow(() -> new ResourceNotFoundException("Customer Account not found"));
 		
 		if(accountno==c.getCustomerid()) {
 			f=true;
@@ -45,12 +44,12 @@ public class AccountController {
 		if(f) {
 			Account registeredAccount = aservice.registerAccount(account);
 			if(registeredAccount!=null) {
-				return ResponseEntity.ok("okay done");
+				return ResponseEntity.ok("Netbanking Registration successful!");
 				} else {
-					return ResponseEntity.badRequest().body("not done");
+					return ResponseEntity.badRequest().body("Error occured during netbanking registration");
 		}
 		}else {
-			return ResponseEntity.badRequest().body("not done");
+			return ResponseEntity.badRequest().body("Error occured during netbanking registration");
 		}
 			
 		
@@ -65,7 +64,7 @@ public class AccountController {
 		
 		Account ac = aservice.loginAccount(aid).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
 		
-		if(aid==ac.getAccountno() && password.equals(ac.getPassword())) {
+		if(aid.equals(ac.getAccountno()) && password.equals(ac.getPassword())) {
 			a = true;
 		}
 		return a;
