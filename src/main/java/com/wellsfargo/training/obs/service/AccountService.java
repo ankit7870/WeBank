@@ -1,5 +1,6 @@
 package com.wellsfargo.training.obs.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,13 @@ public class AccountService {
 	public Optional<Account> getAccountByNo (Long accountno) {
 		return arepo.findByAccountno(accountno);
 	}
-
-	public void saveAccounts(Account a) {
-		// TODO Auto-generated method stub
-		arepo.save(a);
-		
+	
+	public List<Account> listAll(){
+		return arepo.findAll();
+	}
+	
+	public void deleteAccount(Long accountno) {
+		arepo.deleteByAccountno(accountno);
 	}
 
 	

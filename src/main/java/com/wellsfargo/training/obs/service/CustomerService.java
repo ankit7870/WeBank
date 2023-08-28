@@ -1,5 +1,6 @@
 package com.wellsfargo.training.obs.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,17 @@ public class CustomerService {
 	public Optional<Customer> registerAccount(Long cid) {
 		return urepo.findById(cid);
 	}
-
 	
-	public Customer getCurrentUser(Long fromAcc) {
-		// TODO Auto-generated method stub
-		return urepo.getById(fromAcc);
+	public Optional<Customer> getCustomerById (Long cid){
+		return urepo.findById(cid);
+	}
+	
+	public List<Customer> listAll(){
+		return urepo.findAll();
+	}
+	
+	public void deleteCustomer(Long cid) {
+		urepo.deleteById(cid);
 	}
 
 	
