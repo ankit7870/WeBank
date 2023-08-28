@@ -1,15 +1,19 @@
 package com.wellsfargo.training.obs.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.wellsfargo.training.obs.service.AccountService;
 import com.wellsfargo.training.obs.service.CustomerService;
-import com.wellsfargo.training.obs.service.TransactionService; 
+import com.wellsfargo.training.obs.service.TransactionService;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -113,7 +117,7 @@ public class TransactionController {
 			toAccount.setBalance(balance);
 			Account a=accountsService.getAccountByNo(toAcc).orElseThrow(()->new ResourceNotFoundException("Product not found for this Id : "));;
 			a.setBalance(toBalance);
-			Account b=accountsService.getAccountByNo(fromAcc).orElseThrow(()->new ResourceNotFoundException("Product not found for this Id : "));;
+			Account b=accountsService.getAccountByNo(fromAcc).orElseThrow(()->new ResourceNotFoundException("Product not found for this Id : "));
 			b.setBalance(balance);
 			
 
@@ -138,19 +142,23 @@ public class TransactionController {
 			return new ResponseEntity<>(mp, HttpStatus.CREATED);
 	}
 	
-	@GetMapping
-	public List<Transaction> getAllTransaction(){
-		return TransactionService.getAllTransaction();
-	}
-	
-//	@GetMapping("accNumber")
-//	public ResponseEntity<List<Transaction>> getUsersTransaction() {
-//		long accNumber = customerService.getCurrentUser().getAccount().getAccNumber();
-//		List<Transaction> transaction = TransactionService.findByUserId(accNumber);
-//		if(transaction.isEmpty()) {
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//		}
-//		return new ResponseEntity<>(transaction, HttpStatus.OK);
+//	@GetMapping("transaction")
+//	public List<Transaction> getAllTransaction(){
+//		return TransactionService.getAllTransaction();
 //	}
-}
 
+	@GetMapping("/{userid}")
+	public List<Transaction> getCustTransaction(@PathVariable(value="userid") Long cId){
+		//System.out.println(cId);
+		List<Transaction> t= TransactionService.getAllTransaction();
+		List<Transaction> trans=new ArrayList<Transaction>();
+		for(Transaction x:t) {
+			if(x.getFromacc().equals(cId) ) trans.add(x);
+		}
+		
+		for(Transaction x:t) {
+			if(x.getToacc().equals(cId)) trans.add(x);
+		}
+		return trans;
+	}
+}
