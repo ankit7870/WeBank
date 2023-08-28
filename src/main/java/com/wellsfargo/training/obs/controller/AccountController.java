@@ -107,7 +107,7 @@ public class AccountController {
 	}
 	
 	@DeleteMapping("/accounts/{accountno}")
-	public Map<String, Boolean> deleteAccount(@PathVariable(value="acocuntno") Long aNo) throws ResourceNotFoundException {
+	public Map<String, Boolean> deleteAccount(@PathVariable(value="accountno") Long aNo) throws ResourceNotFoundException {
 		
 		aservice.getAccountByNo(aNo).orElseThrow(() -> new ResourceNotFoundException("Account not found having Account No : "+aNo));
 		aservice.deleteAccount(aNo);
