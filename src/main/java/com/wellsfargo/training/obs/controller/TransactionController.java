@@ -1,22 +1,14 @@
 package com.wellsfargo.training.obs.controller;
 
-//package com.example.wfbank.controller;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 import com.wellsfargo.training.obs.service.AccountService;
 import com.wellsfargo.training.obs.service.CustomerService;
 import com.wellsfargo.training.obs.service.TransactionService; 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,18 +31,16 @@ import com.wellsfargo.training.obs.model.Transaction;
 public class TransactionController {
 	@Autowired private TransactionService TransactionService;
 	@Autowired private AccountService accountsService;
-	@Autowired private CustomerService userService;
 	@Autowired private AccountController accountcont;
 	
 //	@Autowired private BCryptPasswordEncoder passwordEncoder;
 	private ObjectMapper objectMapper;
-	private Logger LOGGER = LoggerFactory.getLogger(getClass())	;
+//	private Logger LOGGER = LoggerFactory.getLogger(getClass())	;
 	public TransactionController(AccountController a,TransactionService TransactionService, CustomerService userService, 
 			AccountService accountService) {
 		super();
 		this.accountcont=a;
 		this.TransactionService = TransactionService;
-		this.userService = userService;
 		this.accountsService = accountService;
 //		this.passwordEncoder = passwordEncoder;
 		this.objectMapper = new ObjectMapper();
@@ -70,7 +60,7 @@ public class TransactionController {
 			mp.put("message", e.getMessage());
 			return new ResponseEntity<>(mp, HttpStatus.UNAUTHORIZED);
 		}
-		Long transId;
+		//Long transId;
 		try {
 			Long fromAcc = jsonNode.get("fromacc").asLong();
 			Long toAcc = jsonNode.get("toacc").asLong();
@@ -96,26 +86,26 @@ public class TransactionController {
 //			if(accountsService.existsById(toAcc)==false) {
 //				throw new Exception("Transaction done to an invalid account");
 //			}
-//			
-//			if(type.equals("RTGS")) {
-//				if((amount.compareTo(BigDecimal.valueOf(200000)) == -1)&& (amount.compareTo(BigDecimal.valueOf(1000000)) == 1)) {
-//					throw new Exception("Transaction amount should be between 2 Lakhs and 10 Lakhs");
-//				}
-//			}
-//			else if(type.equals("IMPS")) {
-//				if(amount.compareTo(BigDecimal.valueOf(500000)) == 1) {
-//					throw new Exception("Transaction amount should be less than 5 Lakhs");
-//				}
-//			}
-//			else {
-//				if(amount.compareTo(BigDecimal.valueOf(1000000)) == 1) {
-//					throw new Exception("Transaction amount should be less than 10 Lakhs");
-//				}
-//			}
-//			if(amount.compareTo(balance) == 1) {
-//				throw new Exception("Insufficent balance");
-//			}
-//			
+			
+			if(type.equals("RTGS")) {
+				if((amount.compareTo((long) 200000) == -1)&& (amount.compareTo((long)1000000) == 1)) {
+					throw new Exception("Transaction amount should be between 2 Lakhs and 10 Lakhs");
+				}
+			}
+			else if(type.equals("IMPS")) {
+				if(amount.compareTo((long)500000) == 1) {
+					throw new Exception("Transaction amount should be less than 5 Lakhs");
+				}
+			}
+			else {
+				if(amount.compareTo((long)1000000) == 1) {
+					throw new Exception("Transaction amount should be less than 10 Lakhs");
+				}
+			}
+			if(amount.compareTo(balance) == 1) {
+				throw new Exception("Insufficent balance");
+			}
+			
 			Long toBalance = toAccount.getBalance();
 			balance = balance-amount;
 			toBalance = toBalance+amount;
@@ -148,14 +138,14 @@ public class TransactionController {
 			return new ResponseEntity<>(mp, HttpStatus.CREATED);
 	}
 	
-//	@GetMapping
-//	public List<Transaction> getAllTransaction(){
-//		return TransactionService.getAllTransaction();
-//	}
+	@GetMapping
+	public List<Transaction> getAllTransaction(){
+		return TransactionService.getAllTransaction();
+	}
 	
 //	@GetMapping("accNumber")
 //	public ResponseEntity<List<Transaction>> getUsersTransaction() {
-//		long accNumber = userService.getCurrentUser().getAccount().getAccNumber();
+//		long accNumber = customerService.getCurrentUser().getAccount().getAccNumber();
 //		List<Transaction> transaction = TransactionService.findByUserId(accNumber);
 //		if(transaction.isEmpty()) {
 //			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
