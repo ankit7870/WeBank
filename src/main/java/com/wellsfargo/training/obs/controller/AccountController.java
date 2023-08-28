@@ -1,9 +1,14 @@
 package com.wellsfargo.training.obs.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -67,5 +72,48 @@ public class AccountController {
 			a = true;
 		}
 		return a;
+	}
+	
+	
+	@GetMapping("/accounts")
+	public List<Account> getAllAccounts(){
+		try {
+			return aservice.listAll();
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return aservice.listAll();
+	}
+	
+	@GetMapping("/accounts/{accountno}")
+	public ResponseEntity<Account> getAccountByAccountNo(@PathVariable(value="accountno") Long aNo) throws ResourceNotFoundException {
+		Account a = aservice.getAccountByNo(aNo).orElseThrow(()->new ResourceNotFoundException("Account not found having Account No : "+aNo));
+		
+		return ResponseEntity.ok().body(a);
+	}
+	
+	@PutMapping("/accounts/{accountno}")
+	public ResponseEntity<Account> updateAccount(@PathVariable(value="accountno") Long aNo, @Validated @RequestBody Account a) throws ResourceNotFoundException {
+		Account account = aservice.getAccountByNo(aNo).orElseThrow(()-> new ResourceNotFoundException("Account not found having Account No : "+aNo));
+		
+		account.setBalance(a.getBalance());
+		account.setType(a.getType());
+		
+		final Account updateAccount = aservice.registerAccount(account);
+		
+		return ResponseEntity.ok().body(updateAccount);
+	}
+	
+	@DeleteMapping("/accounts/{accountno}")
+	public Map<String, Boolean> deleteAccount(@PathVariable(value="acocuntno") Long aNo) throws ResourceNotFoundException {
+		
+		aservice.getAccountByNo(aNo).orElseThrow(() -> new ResourceNotFoundException("Account not found having Account No : "+aNo));
+		aservice.deleteAccount(aNo);
+		
+		Map<String, Boolean> response = new HashMap<>();
+		response.put("Deleted", Boolean.TRUE);
+		
+		return response; 
 	}
 }
